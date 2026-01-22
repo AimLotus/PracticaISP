@@ -112,9 +112,6 @@ jobs:
           echo ">>> 4. Limpiando Caché..."
           php artisan config:clear
           
-          # Usamos 'file' temporalmente para limpiar sin necesitar DB, por si acaso
-          CACHE_DRIVER=file php artisan cache:clear
-          
           echo ">>> 5. Migrando Base de Datos..."
           php artisan migrate --force
           
