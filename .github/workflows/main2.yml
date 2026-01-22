@@ -92,14 +92,9 @@ jobs:
           
           cd /var/www/html/tesis-backend/
           
-          echo ">>> 2. Instalando dependencias..."
           rm -f bootstrap/cache/config.php
           composer install --optimize-autoloader --no-dev
           
-          echo ">>> 3. Configurando entorno..."
-          # --- AQUÍ ESTÁ EL TRUCO ---
-          # Exportamos las variables para que TODOS los comandos de abajo las usen.
-          # Reemplaza 'tu_clave_real_de_lotus' por la contraseña verdadera.
           export DB_CONNECTION=pgsql
           export DB_HOST=127.0.0.1
           export DB_PORT=5432
@@ -107,12 +102,8 @@ jobs:
           export DB_USERNAME=lotus
           export DB_PASSWORD=123456
           
-          # Si el cache driver es database, necesitamos la conexión YA.
-          # Si falla, intentamos forzar el driver a 'file' solo para este despliegue.
-          echo ">>> 4. Limpiando Caché..."
           php artisan config:clear
           
-          echo ">>> 5. Migrando Base de Datos..."
           php artisan migrate --force
           php artisan migrate --seed
           
