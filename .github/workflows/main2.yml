@@ -105,7 +105,7 @@ jobs:
           export DB_PORT=5432
           export DB_DATABASE=tesis_db
           export DB_USERNAME=lotus
-          export DB_PASSWORD=tu_clave_real_de_lotus
+          export DB_PASSWORD=123456
           
           # Si el cache driver es database, necesitamos la conexión YA.
           # Si falla, intentamos forzar el driver a 'file' solo para este despliegue.
