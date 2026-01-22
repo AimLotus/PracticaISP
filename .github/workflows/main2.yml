@@ -89,10 +89,18 @@ jobs:
         run: |
           # CORREGIDO: Usamos ./Proyecto1/ en lugar de ./backend/
           rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
+
+           composer install --optimize-autoloader --no-dev
+           
+          php artisan config:clear
+          php artisan cache:clear
+          rm -f bootstrap/cache/config.php
           
-          cd /var/www/html/tesis-backend/
-          composer install --optimize-autoloader --no-dev
-          php artisan migrate --force
+          # ### PASO CRÍTICO 2: Migrar forzando las credenciales ###
+          # Esto ignora si el archivo .env falla y usa lo que tú digas aquí
+          DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=5432 DB_DATABASE=tesis_db DB_USERNAME=lotus DB_PASSWORD=123456 php artisan migrate --force
+          
+          # Optimizamos al final
           php artisan optimize
 
       - name: Desplegar Frontend
