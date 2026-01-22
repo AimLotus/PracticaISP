@@ -61,19 +61,18 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./miapp-web # <--- TU CARPETA DE FRONTEND REAL
+        working-directory: ./miapp-web 
     steps:
     - uses: actions/checkout@v3
     
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: '20' # <--- CORREGIDO: Actualizado a v20 por requisito de react-router
+        node-version: '20' 
         
     - name: Build
       env: 
-        CI: false # <--- CORREGIDO: Evita que las advertencias (warnings) rompan el build
-      run: |
+        CI: false 
         npm install
         npm run build
 
