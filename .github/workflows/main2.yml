@@ -85,36 +85,41 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Desplegar Backend (Todo en uno)
+      - name: Desplegar Backend (Con credenciales globales)
         run: |
-          echo ">>> 1. Iniciando Sincronización..."
-          # Usamos rsync para enviar los archivos
+          echo ">>> 1. Sincronizando archivos..."
           rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
           
-          echo ">>> 2. Cambiando de carpeta..."
           cd /var/www/html/tesis-backend/
           
-          echo ">>> 3. Verificando dónde estamos..."
-          pwd  # Esto debería imprimir /var/www/html/tesis-backend/
-          ls -la composer.json # Esto verifica que el archivo exista antes de intentar instalar
-          
-          echo ">>> 4. Instalando dependencias..."
-          # Borramos caché previa por seguridad
+          echo ">>> 2. Instalando dependencias..."
           rm -f bootstrap/cache/config.php
-          
-          # Instalamos
           composer install --optimize-autoloader --no-dev
           
-          echo ">>> 5. Migrando Base de Datos..."
-          php artisan config:clear
-          php artisan cache:clear
+          echo ">>> 3. Configurando entorno..."
+          # --- AQUÍ ESTÁ EL TRUCO ---
+          # Exportamos las variables para que TODOS los comandos de abajo las usen.
+          # Reemplaza 'tu_clave_real_de_lotus' por la contraseña verdadera.
+          export DB_CONNECTION=pgsql
+          export DB_HOST=127.0.0.1
+          export DB_PORT=5432
+          export DB_DATABASE=tesis_db
+          export DB_USERNAME=lotus
+          export DB_PASSWORD=tu_clave_real_de_lotus
           
-          # Forzamos las credenciales aquí para evitar errores de lectura del .env
-          # REEMPLAZA 'tu_clave_real' CON LA CONTRASEÑA DE TU USUARIO LOTUS O POSTGRES
-          DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=5432 DB_DATABASE=tesis_db DB_USERNAME=lotus DB_PASSWORD=123456 php artisan migrate --force
+          # Si el cache driver es database, necesitamos la conexión YA.
+          # Si falla, intentamos forzar el driver a 'file' solo para este despliegue.
+          echo ">>> 4. Limpiando Caché..."
+          php artisan config:clear
+          
+          # Usamos 'file' temporalmente para limpiar sin necesitar DB, por si acaso
+          CACHE_DRIVER=file php artisan cache:clear
+          
+          echo ">>> 5. Migrando Base de Datos..."
+          php artisan migrate --force
           
           php artisan optimize
-
+          
       - name: Desplegar Frontend
         run: |
           cd ./miapp-web
