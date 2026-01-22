@@ -85,36 +85,39 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Desplegar Backend
+      - name: Desplegar Backend (Todo en uno)
         run: |
-          # CORREGIDO: Usamos ./Proyecto1/ en lugar de ./backend/
+          echo ">>> 1. Iniciando Sincronización..."
+          # Usamos rsync para enviar los archivos
           rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
-
-           composer install --optimize-autoloader --no-dev
-           
-          php artisan config:clear
-          php artisan cache:clear
+          
+          echo ">>> 2. Cambiando de carpeta..."
+          cd /var/www/html/tesis-backend/
+          
+          echo ">>> 3. Verificando dónde estamos..."
+          pwd  # Esto debería imprimir /var/www/html/tesis-backend/
+          ls -la composer.json # Esto verifica que el archivo exista antes de intentar instalar
+          
+          echo ">>> 4. Instalando dependencias..."
+          # Borramos caché previa por seguridad
           rm -f bootstrap/cache/config.php
           
-          # ### PASO CRÍTICO 2: Migrar forzando las credenciales ###
-          # Esto ignora si el archivo .env falla y usa lo que tú digas aquí
+          # Instalamos
+          composer install --optimize-autoloader --no-dev
+          
+          echo ">>> 5. Migrando Base de Datos..."
+          php artisan config:clear
+          php artisan cache:clear
+          
+          # Forzamos las credenciales aquí para evitar errores de lectura del .env
+          # REEMPLAZA 'tu_clave_real' CON LA CONTRASEÑA DE TU USUARIO LOTUS O POSTGRES
           DB_CONNECTION=pgsql DB_HOST=127.0.0.1 DB_PORT=5432 DB_DATABASE=tesis_db DB_USERNAME=lotus DB_PASSWORD=123456 php artisan migrate --force
           
-          # Optimizamos al final
           php artisan optimize
 
       - name: Desplegar Frontend
         run: |
-          # CORREGIDO: Usamos ./miapp-web en lugar de ./frontend
           cd ./miapp-web
-          
-          # Nota: Como es self-hosted, aseguramos node 20 también si es necesario, 
-          # o asumimos que tu servidor ya lo tiene.
           npm install 
-          
-          # Agregamos CI=false también aquí por si acaso
           CI=false npm run build
-          
-          rsync -av ./build/ /var/www/html/tesis-frontend/ 
-          # OJO: React suele crear la carpeta 'build', Vite crea 'dist'. 
-          # Si usas Vite cambia ./build/ por ./dist/
+          rsync -av ./build/ /var/www/html/tesis-frontend/
