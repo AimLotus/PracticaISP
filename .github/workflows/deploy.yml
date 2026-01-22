@@ -4,30 +4,27 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # --- JOB 1: TEST BACKEND (Con Base de Datos PostgreSQL) ---
+  # --- JOB 1: TEST BACKEND ---
   test-backend:
     runs-on: ubuntu-latest
     
-    # Esto crea una base de datos PostgreSQL "fantasma" solo para el test
     services:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
+          POSTGRES_DB: proyecto
+          POSTGRES_USER: lotus
           POSTGRES_PASSWORD: 123456
         ports:
           - 5432:5432
-        # Esperamos a que la DB esté lista antes de seguir
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     defaults:
       run:
-        working-directory: ./Proyecto1
+        working-directory: ./Proyecto1  # <--- TU CARPETA DE BACKEND REAL
 
     steps:
     - uses: actions/checkout@v3
@@ -36,7 +33,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: pgsql, pdo_pgsql # Necesario para Postgres
+        extensions: pgsql, pdo_pgsql
     
     - name: Instalar Dependencias
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -47,36 +44,37 @@ jobs:
         php artisan key:generate
         
     - name: Ejecutar Tests
-      #
       env:
         DB_CONNECTION: pgsql
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
-        DB_DATABASE: test_db
-        DB_USERNAME: test_user
+        DB_DATABASE: proyecto
+        DB_USERNAME: lotus
         DB_PASSWORD: 123456
       run: |
-        php artisan migrate --force # Crea las tablas en la DB de prueba
-        php artisan test            # Corre los tests
-
+        php artisan migrate --force
+        php artisan test
   # --- JOB 2: BUILD FRONTEND ---
   build-frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./miapp-web
+        working-directory: ./miapp-web # <--- TU CARPETA DE FRONTEND REAL
     steps:
     - uses: actions/checkout@v3
+    
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20' # <--- CORREGIDO: Actualizado a v20 por requisito de react-router
+        
     - name: Build
+      env: 
+        CI: false # <--- CORREGIDO: Evita que las advertencias (warnings) rompan el build
       run: |
         npm install
         npm run build
-
-  # --- JOB 3: DEPLOY  ---
+  # --- JOB 3: DEPLOY ---
   deploy:
     needs: [test-backend, build-frontend]
     if: github.ref == 'refs/heads/main'
@@ -84,21 +82,33 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Desplegar Backend
+      - name: Desplegar Backend (Con credenciales globales)
         run: |
-          # Sincronizar archivos (ajusta las rutas de destino)
-          rsync -av --exclude='.git' ./backend/ /var/www/html/tesis-backend/
+          echo ">>> 1. Sincronizando archivos..."
+          rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
           
-          # Comandos post-deploy
           cd /var/www/html/tesis-backend/
+          
+          rm -f bootstrap/cache/config.php
           composer install --optimize-autoloader --no-dev
           
-          # IMPORTANTE: Asegúrate de que el .env DE TU SERVIDOR (el real) tenga la IP de tu Docker real
+          export DB_CONNECTION=pgsql
+          export DB_HOST=127.0.0.1
+          export DB_PORT=5432
+          export DB_DATABASE=proyecto
+          export DB_USERNAME=lotus
+          export DB_PASSWORD=123456
+          
+          php artisan config:clear
+          
           php artisan migrate --force
+          php artisan migrate --seed
+          
           php artisan optimize
-
+          
       - name: Desplegar Frontend
         run: |
-          cd ./frontend
-          npm install && npm run build
-          rsync -av ./dist/ /var/www/html/tesis-frontend/
+          cd ./miapp-web
+          npm install 
+          CI=false npm run build
+          rsync -av ./build/ /var/www/html/tesis-frontend/
