@@ -1,0 +1,112 @@
+name: CI/CD Tesis - Laravel Postgres & React
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # --- JOB 1: TEST BACKEND ---
+  test-backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: proyecto
+          POSTGRES_USER: lotus
+          POSTGRES_PASSWORD: 123456
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: ./Proyecto1  # <--- TU CARPETA DE BACKEND REAL
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pgsql, pdo_pgsql
+    
+    - name: Instalar Dependencias
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      
+    - name: Generar Key
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+        
+    - name: Ejecutar Tests
+      env:
+        DB_CONNECTION: pgsql
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
+        DB_DATABASE: proyecto
+        DB_USERNAME: lotus
+        DB_PASSWORD: 123456
+      run: |
+        php artisan migrate --force
+        php artisan test
+
+  # --- JOB 2: BUILD FRONTEND ---
+  build-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./miapp-web # <--- TU CARPETA DE FRONTEND REAL
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20' # <--- CORREGIDO: Actualizado a v20 por requisito de react-router
+        
+    - name: Build
+      env: 
+        CI: false # <--- CORREGIDO: Evita que las advertencias (warnings) rompan el build
+      run: |
+        npm install
+        npm run build
+
+  # --- JOB 3: DEPLOY ---
+  deploy:
+    needs: [test-backend, build-frontend]
+    if: github.ref == 'refs/heads/main'
+    runs-on: self-hosted 
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Desplegar Backend
+        run: |
+          # CORREGIDO: Usamos ./Proyecto1/ en lugar de ./backend/
+          rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
+          
+          cd /var/www/html/tesis-backend/
+          composer install --optimize-autoloader --no-dev
+          php artisan migrate --force
+          php artisan optimize
+
+      - name: Desplegar Frontend
+        run: |
+          # CORREGIDO: Usamos ./miapp-web en lugar de ./frontend
+          cd ./miapp-web
+          
+          # Nota: Como es self-hosted, aseguramos node 20 también si es necesario, 
+          # o asumimos que tu servidor ya lo tiene.
+          npm install 
+          
+          # Agregamos CI=false también aquí por si acaso
+          CI=false npm run build
+          
+          rsync -av ./build/ /var/www/html/tesis-frontend/ 
+          # OJO: React suele crear la carpeta 'build', Vite crea 'dist'. 
+          # Si usas Vite cambia ./build/ por ./dist/
