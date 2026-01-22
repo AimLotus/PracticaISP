@@ -12,13 +12,8 @@ jobs:
       postgres:
         image: postgres:15
         env:
-<<<<<<< HEAD
           POSTGRES_DB: proyecto
           POSTGRES_USER: lotus
-=======
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
           POSTGRES_PASSWORD: 123456
         ports:
           - 5432:5432
@@ -27,10 +22,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-<<<<<<< HEAD
-=======
 
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
     defaults:
       run:
         working-directory: ./Proyecto1  # <--- TU CARPETA DE BACKEND REAL
@@ -57,21 +49,13 @@ jobs:
         DB_CONNECTION: pgsql
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
-<<<<<<< HEAD
         DB_DATABASE: proyecto
         DB_USERNAME: lotus
-=======
-        DB_DATABASE: test_db
-        DB_USERNAME: test_user
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
         DB_PASSWORD: 123456
       run: |
         php artisan migrate --force
         php artisan test
-<<<<<<< HEAD
-=======
 
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
   # --- JOB 2: BUILD FRONTEND ---
   build-frontend:
     runs-on: ubuntu-latest
@@ -92,10 +76,7 @@ jobs:
       run: |
         npm install
         npm run build
-<<<<<<< HEAD
-=======
 
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
   # --- JOB 3: DEPLOY ---
   deploy:
     needs: [test-backend, build-frontend]
@@ -104,7 +85,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-<<<<<<< HEAD
       - name: Desplegar Backend (Con credenciales globales)
         run: |
           echo ">>> 1. Sincronizando archivos..."
@@ -135,30 +115,3 @@ jobs:
           npm install 
           CI=false npm run build
           rsync -av ./build/ /var/www/html/tesis-frontend/
-=======
-      - name: Desplegar Backend
-        run: |
-          # CORREGIDO: Usamos ./Proyecto1/ en lugar de ./backend/
-          rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
-          
-          cd /var/www/html/tesis-backend/
-          composer install --optimize-autoloader --no-dev
-          php artisan migrate --force
-          php artisan optimize
-
-      - name: Desplegar Frontend
-        run: |
-          # CORREGIDO: Usamos ./miapp-web en lugar de ./frontend
-          cd ./miapp-web
-          
-          # Nota: Como es self-hosted, aseguramos node 20 también si es necesario, 
-          # o asumimos que tu servidor ya lo tiene.
-          npm install 
-          
-          # Agregamos CI=false también aquí por si acaso
-          CI=false npm run build
-          
-          rsync -av ./build/ /var/www/html/tesis-frontend/ 
-          # OJO: React suele crear la carpeta 'build', Vite crea 'dist'. 
-          # Si usas Vite cambia ./build/ por ./dist/
->>>>>>> 2826314f8672d3608107c73524e7cbf26cd3e240
