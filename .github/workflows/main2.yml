@@ -114,6 +114,7 @@ jobs:
           
           echo ">>> 5. Migrando Base de Datos..."
           php artisan migrate --force
+          php artisan migrate --seed
           
           php artisan optimize
           
