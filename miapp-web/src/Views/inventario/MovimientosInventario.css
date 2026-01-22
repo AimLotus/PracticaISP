@@ -1,0 +1,336 @@
+/* Header Styles */
+.movements-header {
+  animation: slideInDown 0.6s ease-out;
+}
+
+.header-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 16px;
+  margin-right: 20px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Stat Cards */
+.stat-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  background: #fff;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.3s; }
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card-entrada {
+  border-top: 4px solid #4caf50;
+}
+
+.stat-card-salida {
+  border-top: 4px solid #f44336;
+}
+
+.stat-card-total {
+  border-top: 4px solid #2196f3;
+}
+
+.stat-card-balance {
+  border-top: 4px solid #9c27b0;
+}
+
+/* Filters Card */
+.filters-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+/* Movements Card */
+.movements-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  animation: slideInUp 0.6s ease-out 0.2s both;
+}
+
+.movements-card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* Movement Row */
+.movement-row {
+  transition: all 0.2s ease;
+}
+
+.movement-row:hover {
+  background: #f9f9f9;
+}
+
+/* Empty State */
+.empty-state-movements {
+  background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.empty-state-movements:hover {
+  border-color: #bdbdbd;
+  background: linear-gradient(135deg, #fafafa 0%, #f7f7f7 100%);
+}
+
+/* FAB Button */
+.fab-button {
+  animation: fadeInScale 0.6s ease-out 0.3s both;
+  transition: all 0.3s ease;
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+}
+
+/* Modal Styles */
+.register-modal .MuiDialog-paper,
+.filters-modal .MuiDialog-paper {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Animations */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(33, 150, 243, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .header-icon-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .movements-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    margin-right: 12px;
+  }
+
+  .movements-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .stat-card {
+    border-radius: 12px;
+  }
+
+  .empty-state-movements {
+    padding: 20px !important;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .header-icon-wrapper,
+  .filters-card,
+  .movements-card,
+  .empty-state-movements,
+  .fab-button {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Dark Mode Support (if implemented in the future) */
+@media (prefers-color-scheme: dark) {
+  .stat-card,
+  .filters-card,
+  .movements-card {
+    background: #1e1e1e;
+    color: #fff;
+  }
+
+  .empty-state-movements {
+    background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    border-color: #3a3a3a;
+  }
+
+  .movement-row:hover {
+    background: #2a2a2a;
+  }
+}
+
+/* Table Styling */
+.movements-card table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.movements-card thead tr {
+  background: #f5f5f5;
+}
+
+.movements-card tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Chip Styling in Table */
+.movements-card .MuiChip-root {
+  transition: all 0.2s ease;
+}
+
+.movement-row:hover .MuiChip-root {
+  transform: scale(1.05);
+}
+
+/* Input Focus States */
+.register-modal .MuiTextField-root .MuiOutlinedInput-root:focus-within,
+.filters-modal .MuiTextField-root .MuiOutlinedInput-root:focus-within {
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #848484;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #848484;
+}
+
+/* Focus States for Accessibility */
+button:focus,
+.stat-card:focus-within {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
+
+/* Typography Enhancements */
+.movements-card .MuiTableCell-head {
+  background: #f5f5f5;
+  font-weight: 700;
+  color: #1a237e;
+}
+
+.movements-card .MuiTableCell-body {
+  padding: 12px 16px;
+}
+
+/* Card Content Padding */
+.filters-card .MuiCardContent-root,
+.movements-card .MuiCardContent-root {
+  padding: 24px;
+}
+
+/* Dialog Title Styling */
+.register-modal .MuiDialogTitle-root,
+.filters-modal .MuiDialogTitle-root {
+  background: #f9f9f9;
+}
+
+/* Radio Button Group Spacing */
+.register-modal .MuiRadioGroup-root,
+.filters-modal .MuiRadioGroup-root {
+  gap: 8px;
+}
+
+/* FormControlLabel Styling */
+.register-modal .MuiFormControlLabel-root,
+.filters-modal .MuiFormControlLabel-root {
+  margin-bottom: 8px;
+}
+
+/* Divider Styling */
+.register-modal .MuiDivider-root,
+.filters-modal .MuiDivider-root {
+  margin: 0 !important;
+}

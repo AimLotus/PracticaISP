@@ -1,0 +1,7 @@
+# Ignorar archivos de backup de base de datos
+*.sql
+*.dump
+!docker-init/*.sql
+
+# Ignorar datos de pgAdmin
+pgadmin_data/

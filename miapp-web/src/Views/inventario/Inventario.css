@@ -1,0 +1,278 @@
+/* Header Styles */
+.inventory-header {
+  animation: slideInDown 0.6s ease-out;
+}
+
+.header-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 16px;
+  margin-right: 20px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Search Container */
+.search-container {
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+.search-input {
+  transition: all 0.3s ease;
+}
+
+/* Product Cards */
+.product-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.product-card:nth-child(1) { animation-delay: 0s; }
+.product-card:nth-child(2) { animation-delay: 0.05s; }
+.product-card:nth-child(3) { animation-delay: 0.1s; }
+.product-card:nth-child(4) { animation-delay: 0.15s; }
+.product-card:nth-child(5) { animation-delay: 0.2s; }
+.product-card:nth-child(6) { animation-delay: 0.25s; }
+.product-card:nth-child(7) { animation-delay: 0.3s; }
+.product-card:nth-child(8) { animation-delay: 0.35s; }
+
+.product-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+.product-card:hover .product-name {
+  color: #2196f3;
+}
+
+/* Prices Section */
+.prices-section {
+  gap: 8px;
+}
+
+.price-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.price-compra,
+.price-venta {
+  padding: 8px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  font-size: 0.85rem;
+}
+
+.price-compra {
+  background: #e8f5e9;
+}
+
+.price-venta {
+  background: #e3f2fd;
+}
+
+/* Stock Section */
+.stock-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Empty State */
+.empty-state-container {
+  background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
+  border: 2px dashed #e0e0e0;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.empty-state-container:hover {
+  border-color: #bdbdbd;
+  background: linear-gradient(135deg, #fafafa 0%, #f7f7f7 100%);
+}
+
+.empty-state-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* Modal Styles */
+.product-modal .MuiDialog-paper {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-product-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Animations */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 24px rgba(33, 150, 243, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .header-icon-box {
+    width: 60px;
+    height: 60px;
+  }
+
+  .inventory-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-icon-box {
+    margin-right: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-card {
+    border-radius: 12px;
+  }
+
+  .prices-section {
+    gap: 6px;
+  }
+
+  .price-box {
+    font-size: 0.75rem;
+  }
+
+  .header-icon-box {
+    width: 50px;
+    height: 50px;
+    margin-right: 12px;
+  }
+
+  .inventory-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .empty-state-container {
+    padding: 20px !important;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .product-card,
+  .header-icon-box,
+  .search-container,
+  .search-input,
+  .empty-state-container {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* Dark Mode Support (if implemented in the future) */
+@media (prefers-color-scheme: dark) {
+  .product-card {
+    background: #fafafa;
+    color: #fff;
+  }
+
+  .empty-state-container {
+    background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    border-color: #3a3a3a;
+  }
+
+  .price-box,
+  .price-compra,
+  .price-venta {
+    background: #e8e8e8;
+    color: #fff;
+  }
+}
+
+/* Hover Effects */
+.product-card:hover {
+  cursor: pointer;
+}
+
+/* Focus States for Accessibility */
+button:focus,
+.product-card:focus-within {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
+
+
+
+/* Chip Badge Animation */
+.MuiChip-root {
+  transition: all 0.2s ease;
+}
+
+.product-card:hover .MuiChip-root {
+  transform: scale(1.05);
+}
+
+/* Card Content Spacing */
+.product-card .MuiCardContent-root {
+  padding: 16px;
+}
+
+/* Typography Overrides */
+.product-card .product-name {
+  transition: color 0.3s ease;
+}
