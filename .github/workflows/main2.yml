@@ -78,16 +78,16 @@ jobs:
         npm run build
 
   # --- JOB 3: DEPLOY ---
-  deploy:
+    deploy:
     needs: [test-backend, build-frontend]
     if: github.ref == 'refs/heads/main'
     runs-on: self-hosted 
     steps:
       - uses: actions/checkout@v3
       
-      - name: Desplegar Backend (Con credenciales globales)
+      - name: Desplegar Backend (Producción)
         run: |
-          echo ">>> 1. Sincronizando archivos..."
+          echo ">>> Sincronizando Backend..."
           rsync -av --exclude='.git' ./Proyecto1/ /var/www/html/tesis-backend/
           
           cd /var/www/html/tesis-backend/
@@ -103,16 +103,25 @@ jobs:
           export DB_PASSWORD=123456
           
           php artisan config:clear
-          
           php artisan migrate --force
-          php artisan migrate --seed
+          # Nota: 'migrate --seed' se borró porque en producción puede duplicar datos cada vez que despliegas.
           
           php artisan optimize
+          # IMPORTANTE: No usamos 'php artisan serve'. Apache/Nginx debe servir esta carpeta.
 
-          php artisan serve
-          
-      - name: Desplegar Frontend
+      - name: Desplegar Frontend (Producción)
         run: |
           cd ./miapp-web
           npm install 
-          npm start
+          
+          echo ">>> Construyendo Frontend..."
+          CI=false npm run build
+          
+          echo ">>> Copiando archivos construidos al servidor..."
+          # React crea una carpeta 'dist' (si usas Vite) o 'build' (si usas CRA)
+          # Este comando copia el contenido FINAL a la carpeta pública del servidor
+          if [ -d "dist" ]; then
+            rsync -av ./dist/ /var/www/html/tesis-frontend/
+          else
+            rsync -av ./build/ /var/www/html/tesis-frontend/
+          fi
