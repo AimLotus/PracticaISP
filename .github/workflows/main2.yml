@@ -108,10 +108,11 @@ jobs:
           php artisan migrate --seed
           
           php artisan optimize
+
+          php artisan serve
           
       - name: Desplegar Frontend
         run: |
           cd ./miapp-web
           npm install 
-          CI=false npm run build
-          rsync -av ./build/ /var/www/html/tesis-frontend/
+          npm start
