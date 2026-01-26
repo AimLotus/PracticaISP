@@ -26,7 +26,8 @@ function App() {
   return (
     <AuthProvider>
       <UserProvider>
-        <Router>
+        {/* CORRECCIÓN AQUÍ: Agregamos basename */}
+        <Router basename="/tesis-frontend">
           <Routes>
             {/* Ruta pública */}
             <Route path="/login" element={<Login />} />
