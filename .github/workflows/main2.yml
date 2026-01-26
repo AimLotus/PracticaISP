@@ -25,7 +25,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./Proyecto1  # <--- TU CARPETA DE BACKEND REAL
+        working-directory: ./Proyecto1
 
     steps:
     - uses: actions/checkout@v3
@@ -78,7 +78,7 @@ jobs:
         npm run build
 
   # --- JOB 3: DEPLOY ---
-    deploy:
+  deploy:
     needs: [test-backend, build-frontend]
     if: github.ref == 'refs/heads/main'
     runs-on: self-hosted 
@@ -104,11 +104,9 @@ jobs:
           
           php artisan config:clear
           php artisan migrate --force
-          # Nota: 'migrate --seed' se borró porque en producción puede duplicar datos cada vez que despliegas.
           
           php artisan optimize
-          # IMPORTANTE: No usamos 'php artisan serve'. Apache/Nginx debe servir esta carpeta.
-
+         
       - name: Desplegar Frontend (Producción)
         run: |
           cd ./miapp-web
@@ -118,8 +116,7 @@ jobs:
           CI=false npm run build
           
           echo ">>> Copiando archivos construidos al servidor..."
-          # React crea una carpeta 'dist' (si usas Vite) o 'build' (si usas CRA)
-          # Este comando copia el contenido FINAL a la carpeta pública del servidor
+          
           if [ -d "dist" ]; then
             rsync -av ./dist/ /var/www/html/tesis-frontend/
           else
