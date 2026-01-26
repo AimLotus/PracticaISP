@@ -107,7 +107,7 @@ jobs:
           
           php artisan optimize
          
-      - name: Desplegar Frontend (Producción)
+      - name: Desplegar Frontend 
         run: |
           cd ./miapp-web
           npm install 
