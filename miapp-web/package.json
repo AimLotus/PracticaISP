@@ -1,7 +1,7 @@
 {
   "name": "miapp-web",
   "version": "0.1.0",
-  "homepage": ".",
+  "homepage": "/tesis-frontend",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
