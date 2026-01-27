@@ -164,7 +164,7 @@ export default function Login() {
                 mb: 3,
               }}
             >
-              Ingresa tus credenciales para acceder a tu cuenta
+              Ingresa tus credenciales para acceder
             </Typography>
 
             <Box component="form" onSubmit={handleLogin}>
